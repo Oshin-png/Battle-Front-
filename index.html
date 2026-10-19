@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>BATTLEFRONT LAGOS</title>
+<style>body{margin:0;background:#000;overflow:hidden;font-family:Arial}canvas{width:100vw;height:100vh;display:block;background:#1a2f1a}#top{position:fixed;top:0;left:0;right:0;height:46px;background:#000;border-bottom:3px solid #0f0;color:#0f0;display:flex;justify-content:space-between;align-items:center;padding:0 12px;font-weight:900;z-index:10}#fire{position:fixed;bottom:20px;right:20px;width:110px;height:110px;border-radius:50%;background:radial-gradient(#ff5555,#a00);border:4px solid #fff;color:#fff;font:900 20px Arial;z-index:10}#move{position:fixed;bottom:20px;left:20px;width:110px;height:110px;border-radius:50%;background:#ffffff22;border:3px solid #ffffff88;z-index:10}</style></head><body>
+<div id="top"><span>🔫 BATTLEFRONT LAGOS</span><span>KILLS: <b id="k">0</b></span></div>
+<button id="fire">FIRE</button><div id="move"></div><canvas id="c"></canvas>
+<script>
+c=document.getElementById('c');X=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+let kills=0,bul=[],en=[],px=c.width/2,py=c.height/2;
+for(let i=0;i<7;i++)en.push({x:Math.random()*c.width,y:60+Math.random()*(c.height-100),hp:100,dx:(Math.random()-.5)*2.5,dy:(Math.random()-.5)*2.5,name:"LAGOS_"+(101+i)});
+function loop(){
+X.fillStyle='#162e16';X.fillRect(0,0,c.width,c.height);
+X.strokeStyle='#ffffff11';for(let i=0;i<c.width;i+=40){X.beginPath();X.moveTo(i,0);X.lineTo(i,c.height);X.stroke()}for(let i=0;i<c.height;i+=40){X.beginPath();X.moveTo(0,i);X.lineTo(c.width,i);X.stroke()}
+en.forEach(e=>{e.x+=e.dx;e.y+=e.dy;if(e.x<0||e.x>c.width)e.dx*=-1;if(e.y<50||e.y>c.height)e.dy*=-1;
+X.fillStyle=e.hp<40?'yellow':'red';X.fillRect(e.x-16,e.y-14,32,36);X.fillStyle='#ffdbac';X.beginPath();X.arc(e.x,e.y-20,10,0,7);X.fill();
+X.fillStyle='white';X.font='bold 9px Arial';X.fillText(e.name,e.x-22,e.y-32);
+X.fillStyle='#333';X.fillRect(e.x-14,e.y-40,28,4);X.fillStyle='lime';X.fillRect(e.x-14,e.y-40,28*e.hp/100,4);
+});
+bul.forEach((b,i)=>{b.x+=b.dx;b.y+=b.dy;X.fillStyle='yellow';X.beginPath();X.arc(b.x,b.y,4,0,7);X.fill();
+en.forEach((e,j)=>{if(Math.hypot(b.x-e.x,b.y-e.y)<22){e.hp-=35;bul.splice(i,1);if(e.hp<=0){en.splice(j,1);kills++;document.getElementById('k').innerText=kills;en.push({x:Math.random()*c.width,y:60+Math.random()*(c.height-100),hp:100,dx:(Math.random()-.5)*3,dy:(Math.random()-.5)*3,name:"LAGOS_"+Math.floor(Math.random()*900)});if(kills>=20){alert('MISSION COMPLETE! LAGOS IS SAFE!');location.reload()}} }})});
+requestAnimationFrame(loop);
+}
+function shoot(){let a=Math.atan2(py-c.height/2,px-c.width/2);bul.push({x:c.width/2,y:c.height-80,dx:Math.cos(a)*12,dy:Math.sin(a)*12});if(navigator.vibrate)navigator.vibrate(30)}
+document.getElementById('fire').onclick=shoot;
+c.addEventListener('touchmove',e=>{px=e.touches[0].clientX;py=e.touches[0].clientY},{passive:false});
+c.onclick=shoot;loop();
+</script></body></html>
